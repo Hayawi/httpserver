@@ -1,4 +1,4 @@
-module github.com/hayawi/http-server
+module github.com/hayawi/httpserver
 
 go 1.24.0
 
