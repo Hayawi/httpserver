@@ -31,6 +31,13 @@ var (
 	authRouteList []route
 )
 
+// AddRoute registers a new route to the application.
+//
+// Parameters:
+// - path: The URL path for the route.
+// - method: The HTTP method for the route (e.g., GETMethod, POSTMethod).
+// - handler: The function to handle requests to this route.
+// - isAuthMethod: Whether the route requires authentication.
 func AddRoute(path string, method int, handler http.HandlerFunc, isAuthMethod bool) {
 	if isAuthMethod {
 		apiRouteList = append(apiRouteList, route{
@@ -49,6 +56,12 @@ func AddRoute(path string, method int, handler http.HandlerFunc, isAuthMethod bo
 	}
 }
 
+// Setup configures the router with middleware, CORS, and routes.
+//
+// Parameters:
+// - router: The chi.Mux router to configure.
+// - allowedOrigins: A list of allowed origins for CORS.
+// - authMiddleWare: Middleware for authentication, applied if FORCE_AUTH is enabled.
 func Setup(router *chi.Mux, allowedOrigins []string, authMiddleWare func(http.Handler) http.Handler) {
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
