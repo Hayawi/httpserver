@@ -62,7 +62,7 @@ func AddRoute(path string, method int, handler http.HandlerFunc, isAuthMethod bo
 // - router: The chi.Mux router to configure.
 // - allowedOrigins: A list of allowed origins for CORS.
 // - authMiddleWare: Middleware for authentication, applied if FORCE_AUTH is enabled.
-func Setup(router *chi.Mux, allowedOrigins []string, authMiddleWare func(http.Handler) http.Handler) {
+func Setup(router *chi.Mux, allowedOrigins []string, authMiddleWare func(http.Handler) http.Handler, allowCredentials bool) {
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Logger)
@@ -70,7 +70,7 @@ func Setup(router *chi.Mux, allowedOrigins []string, authMiddleWare func(http.Ha
 	router.Use(middleware.Timeout(60 * time.Second))
 	router.Use(cors.New(cors.Options{
 		AllowedOrigins:   allowedOrigins,                                      // Frontend origin
-		AllowCredentials: true,                                                // Allow cookies (important)
+		AllowCredentials: allowCredentials,                                    // Allow cookies (important)
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}, // Allowed HTTP methods
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},           // Allowed headers
 	}).Handler)
