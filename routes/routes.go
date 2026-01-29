@@ -62,7 +62,7 @@ func AddRoute(path string, method int, handler http.HandlerFunc, isAuthMethod bo
 // - router: The chi.Mux router to configure.
 // - allowedOrigins: A list of allowed origins for CORS.
 // - authMiddleWare: Middleware for authentication, applied if FORCE_AUTH is enabled.
-func Setup(router *chi.Mux, allowedOrigins []string, authMiddleWare func(http.Handler) http.Handler, allowCredentials bool) {
+func Setup(router *chi.Mux, allowedOrigins []string, authMiddleWare func(http.Handler) http.Handler, allowCredentials bool, allowedHeaders []string) {
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Logger)
@@ -72,7 +72,7 @@ func Setup(router *chi.Mux, allowedOrigins []string, authMiddleWare func(http.Ha
 		AllowedOrigins:   allowedOrigins,                                      // Frontend origin
 		AllowCredentials: allowCredentials,                                    // Allow cookies (important)
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"}, // Allowed HTTP methods
-		AllowedHeaders:   []string{"Content-Type", "Authorization"},           // Allowed headers
+		AllowedHeaders:   allowedHeaders,                                      // Allowed headers
 	}).Handler)
 
 	router.Route("/api", func(router chi.Router) {
@@ -91,7 +91,7 @@ func Setup(router *chi.Mux, allowedOrigins []string, authMiddleWare func(http.Ha
 			case PUTMethod:
 				router.Put(r.path, r.handler)
 			case DELETEMethod:
-				router.Put(r.path, r.handler)
+				router.Delete(r.path, r.handler)
 			default:
 				log.Fatalf("method type for path %s not supported", r.path)
 			}
@@ -109,7 +109,7 @@ func Setup(router *chi.Mux, allowedOrigins []string, authMiddleWare func(http.Ha
 		case PUTMethod:
 			router.Put(r.path, r.handler)
 		case DELETEMethod:
-			router.Put(r.path, r.handler)
+			router.Delete(r.path, r.handler)
 		default:
 			log.Fatalf("method type for path %s not supported", r.path)
 		}
